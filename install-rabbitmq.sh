@@ -3,6 +3,11 @@
 # Install Erlang and RabbitMQ in a debian machine
 # Inspired by https://www.rabbitmq.com/install-debian.html
 
+if [[ $(id -u) -ne 0 ]]; then
+    echo "Please run as root"
+    exit
+fi
+
 ## Install prerequisites
 sudo apt-get update -y
 sudo apt-get install curl gnupg -y
@@ -29,3 +34,20 @@ sudo apt-get install -y erlang-base \
 
 ## Install rabbitmq-server and its dependencies
 sudo apt-get install rabbitmq-server -y --fix-missing
+
+## Configurando o server
+
+echo Escolha um nome de usuario:
+read user
+echo Escolha uma senha:
+read password
+echo Escolha um nome para o vhost:
+read vhost
+
+# criando usuario e senha
+rabbitmqctl add_user $user $password
+# criando um novo vhost
+rabbitmqctl add_vhost $vhost
+# dando permissao ao usuario para acessar o vhost
+rabbitmqctl set_permissions -p $vhost $user ".*" ".*" ".*"
+ 
